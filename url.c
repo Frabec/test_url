@@ -1,9 +1,4 @@
-/**
- *  Jiazi Yi
- *
- * LIX, Ecole Polytechnique
- * jiazi.yi@polytechnique.edu
- */
+/*Frabec*/
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -15,7 +10,6 @@
 /**
  * parse a URL and store the information in info.
  */
-int Valid=0;
 
 void parse_url(char* url, url_info *info)
 {
@@ -38,14 +32,9 @@ void parse_url(char* url, url_info *info)
 		url = "http";
 		info->protocol=url;
 	}
-
-
-	
-	
-	printf("host_name_path: %s\n", host_name_path);
 	
 	if (!strstr(host_name_path,"/")){
-		Valid=1;
+		info->validity=1;
 	}
 	else{
 		
@@ -60,7 +49,7 @@ void parse_url(char* url, url_info *info)
 			while(*token2bis!='\0'){
 				printf("%d\n",*token2bis);
 				if (*token2bis<48 || *token2bis>57){
-					Valid=1;
+					info->validity=1;
 				}
 				else{
 				}
@@ -68,16 +57,32 @@ void parse_url(char* url, url_info *info)
 			}
 			info->port=atoi(token2);
 			info->host=token1;
-			info->path=path_token;
+			if (path_token){
+				char path_name[1000]={"/"};
+				strcat(path_name, path_token);
+				info->path=path_name;
+			}
+			else{
+				info->path="/";
+			}
 
 		}
 
 		else {
 			char *token3 = strtok(host_name_path, "/");
 			char *token4= strtok (NULL, "");
+			if (token4){
+				char path_name[1000]={"/"};
+				strcat(path_name, token4);
+				info->path=path_name;
+			}
+			else{
+				info->path="/";
+			}
+
 			info->port=80;
 			info->host=token3;
-			info->path=token4;
+			
 		}
 	}	
 
@@ -104,17 +109,14 @@ void exit_with_error(char *message)
 	exit(EXIT_FAILURE);
 }
 
-int validate_url(url_info *info){
+void validate_url(url_info *info){
 	if (!info->protocol || !info->host){
-		return 1;
+		info->validity=1;
 	}
 
-	if (Valid==1){
-		return 1;
-	}
 	if (strstr(info->protocol,"/")||strstr(info->host,"/")||strstr(info->protocol,":")||strstr(info->host,":")){
-		return 1;
+		info->validity=1;
 	}
 
-	return 0;
+	info->validity=0;
 }

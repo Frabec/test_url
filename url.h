@@ -16,6 +16,7 @@ struct url_info
 	char* host; // host name
 	int port; 	//port number
 	char* path; //path
+	int validity;
 };
 
 typedef struct url_info url_info;
@@ -28,6 +29,6 @@ void exit_with_error(char* message);
 
 void print_url_info(url_info info);
 
-int validate_url (url_info *info);
+void validate_url (url_info *info);
 
 #endif //URL_H
